@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+tools:context="com.ooftf.demo.layout_chain.demo1.Demo1Activity">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.ooftf.demo.layout_chain.demo1.Demo1ViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.ooftf.demo.layout_chain.demo1.Coordinator
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:tag="toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"/>
+            <ImageView
+                android:tag="header"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_launcher_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <androidx.recyclerview.widget.RecyclerView
+                items="@{viewModel.items}"
+                itemBinding="@{viewModel.itemBinding}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:tag="body"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </com.ooftf.demo.layout_chain.demo1.Coordinator>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
