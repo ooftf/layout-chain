@@ -54,13 +54,6 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
             }
         });
     }
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        header = findViewWithTag("header");
-        toolbar = findViewWithTag("toolbar");
-        body = findViewWithTag("body");
-    }
 
     public void addProgressChangedListener(ProgressChangeListener listener){
         progressChangeListeners.add(listener);
@@ -82,6 +75,9 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
         }
         if (body == null) {
             body = findViewWithTag("body");
+        }
+        if (toolbar == null) {
+            toolbar = findViewWithTag("toolbar");
         }
         measureChildWithMargins(header, widthMeasureSpec, 0, heightMeasureSpec, 0);
         measureChildWithMargins(toolbar, widthMeasureSpec, 0, heightMeasureSpec, 0);
