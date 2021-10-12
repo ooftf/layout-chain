@@ -166,7 +166,7 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
             }else{
                 scroller.fling(0,
                         getScrollY(),
-                        (int)velocityX,
+                        0,
                         (int)velocityY,
                         0,
                         0,
@@ -197,7 +197,7 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
             if(getScrollY()>0){
                 scroller.fling(0,
                         getScrollY(),
-                        (int)velocityX,
+                        0,
                         (int)velocityY,
                         0,
                         0,
