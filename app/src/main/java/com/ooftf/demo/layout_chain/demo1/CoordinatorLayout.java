@@ -135,7 +135,7 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
             } else {
                 consumed[1] = dy;
             }
-            scrollBy(dx, consumed[1]);
+            scrollBy(0, consumed[1]);
         }
     }
 
