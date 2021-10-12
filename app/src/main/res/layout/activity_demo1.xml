@@ -13,28 +13,39 @@ tools:context="com.ooftf.demo.layout_chain.demo1.Demo1Activity">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.ooftf.demo.layout_chain.demo1.Coordinator
+        <com.ooftf.demo.layout_chain.demo1.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:background="#0000ff"
+                android:overScrollMode="never"
+                items="@{viewModel.items2}"
+                itemBinding="@{viewModel.itemBinding2}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:tag="header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
             <TextView
+                android:id="@+id/toolbar"
+                android:text="toolbar"
+                android:gravity="center"
+                android:background="#00ff00"
                 android:tag="toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"/>
-            <ImageView
-                android:tag="header"
-                android:adjustViewBounds="true"
-                android:src="@drawable/ic_launcher_background"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
             <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="#ff0000"
+                android:overScrollMode="never"
                 items="@{viewModel.items}"
                 itemBinding="@{viewModel.itemBinding}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:tag="body"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"/>
 
-            </androidx.recyclerview.widget.RecyclerView>
-        </com.ooftf.demo.layout_chain.demo1.Coordinator>
+        </com.ooftf.demo.layout_chain.demo1.CoordinatorLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
