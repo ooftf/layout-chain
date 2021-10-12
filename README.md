@@ -1,1 +1,1 @@
-![](https://raw.githubusercontent.com/ooftf/Material/master/img/blog/Screenrecorder-2021-10-12-14-59-28-146.mp4)
+![CoordinatorLayout](https://raw.githubusercontent.com/ooftf/Material/master/img/blog/ow8jg-6rpdu.gif)
