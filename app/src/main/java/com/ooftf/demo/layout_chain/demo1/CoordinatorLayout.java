@@ -66,12 +66,6 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (header == null) {
             header = findViewWithTag("header");
-            header.addOnLayoutChangeListener(new OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                    //requestLayout();
-                }
-            });
         }
         if (body == null) {
             body = findViewWithTag("body");
@@ -91,25 +85,29 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int headerLeft = ((MarginLayoutParams) header.getLayoutParams()).leftMargin;
-        header.layout(headerLeft, 0, headerLeft + header.getMeasuredWidth(), header.getMeasuredHeight());
+        layoutHeader();
         layoutBody();
         layoutToolbar();
+    }
+
+    private void layoutHeader() {
+        MarginLayoutParams lp = ((MarginLayoutParams) header.getLayoutParams());
+        header.layout(lp.leftMargin, lp.topMargin, lp.leftMargin + header.getMeasuredWidth(), lp.topMargin+header.getMeasuredHeight());
     }
 
     private float getProgress() {
         return getScrollY() / (float) getCanScrollDistance();
     }
     private void layoutBody(){
+        MarginLayoutParams lp = ((MarginLayoutParams) body.getLayoutParams());
         int overlap = (int) (overLapMax * (1 - getProgress()));
-        int bodyTop = header.getMeasuredHeight() - overlap;
-        int bodyLeft = ((MarginLayoutParams) body.getLayoutParams()).leftMargin;
-        body.layout(bodyLeft, bodyTop, bodyLeft + body.getMeasuredWidth(), body.getMeasuredHeight() + bodyTop);
+        int bodyTop = header.getMeasuredHeight() - overlap+ lp.topMargin;
+        body.layout(lp.leftMargin, bodyTop, lp.leftMargin + body.getMeasuredWidth(), body.getMeasuredHeight() + bodyTop);
     }
     private void layoutToolbar() {
         toolbar.setAlpha(getProgress());
-        int toolbarLeft = ((MarginLayoutParams) toolbar.getLayoutParams()).leftMargin;
-        toolbar.layout(toolbarLeft, getScrollY(), toolbarLeft + toolbar.getMeasuredWidth(), getScrollY() +toolbar.getMeasuredHeight());
+        MarginLayoutParams lp = ((MarginLayoutParams) toolbar.getLayoutParams());
+        toolbar.layout(lp.leftMargin, lp.topMargin+getScrollY(), lp.leftMargin + toolbar.getMeasuredWidth(), lp.topMargin+getScrollY() +toolbar.getMeasuredHeight());
     }
 
     @Override
