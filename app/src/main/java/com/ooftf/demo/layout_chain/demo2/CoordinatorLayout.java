@@ -1,22 +1,16 @@
-package com.ooftf.demo.layout_chain.demo1;
+package com.ooftf.demo.layout_chain.demo2;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.OverScroller;
-import android.widget.ScrollView;
-import android.widget.Scroller;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.NestedScrollingParent;
 import androidx.core.view.ScrollingView;
 import androidx.core.view.ViewCompat;
-import androidx.dynamicanimation.animation.FlingAnimation;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.ooftf.basic.utils.DensityUtil;
 
@@ -135,7 +129,6 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-
         if (dyUnconsumed < 0) {
             //没有滚动到顶部
             int consumedDy = 0;

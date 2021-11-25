@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- activity_main.xml -->
-<androidx.constraintlayout.motion.widget.MotionLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/motionLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:motionDebug="SHOW_ALL"
-    app:layoutDescription="@xml/scene_01">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <View
-        android:id="@+id/button"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:background="@color/colorAccent"
-        android:text="Button" />
+    <data>
+        <variable
+            name="viewModel"
+            type="com.ooftf.demo.layout_chain.MainViewModel" />
+    </data>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/toolbar"
+            android:padding="16dp"
+            android:text="demo列表"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <androidx.recyclerview.widget.RecyclerView
+            items="@{viewModel.items}"
+            itemBinding="@{viewModel.itemBinding}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+</layout>
             

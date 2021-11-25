@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+tools:context="com.ooftf.demo.layout_chain.demo2.Demo2Activity">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.ooftf.demo.layout_chain.demo2.Demo2ViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.ooftf.demo.layout_chain.demo2.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:background="#0000ff"
+                android:overScrollMode="never"
+                items="@{viewModel.items2}"
+                itemBinding="@{viewModel.itemBinding2}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:tag="header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/toolbar"
+                android:text="toolbar"
+                android:gravity="center"
+                android:background="#00ff00"
+                android:tag="toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="#ff0000"
+                android:overScrollMode="never"
+                items="@{viewModel.items}"
+                itemBinding="@{viewModel.itemBinding}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:tag="body"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </com.ooftf.demo.layout_chain.demo2.CoordinatorLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

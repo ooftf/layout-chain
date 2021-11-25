@@ -8,7 +8,18 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.11851851851851852" />
         <entry key="..\:/Android/Workspace/layout-chain/app/src/main/res/layout/activity_demo0.xml" value="0.2672239108409321" />
+        <entry key="app/src/main/res/layout/activity_child.xml" value="0.15070921985815602" />
+        <entry key="app/src/main/res/layout/activity_demo1.xml" value="0.21197916666666666" />
+        <entry key="app/src/main/res/layout/activity_demo3.xml" value="0.21197916666666666" />
+        <entry key="app/src/main/res/layout/activity_demo4.xml" value="0.21197916666666666" />
+        <entry key="app/src/main/res/layout/activity_de膜.xml" value="0.15070921985815602" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main2.xml" value="0.15070921985815602" />
+        <entry key="app/src/main/res/layout/item_demo1.xml" value="0.10309017223910841" />
+        <entry key="app/src/main/res/layout/item_demo2.xml" value="0.21197916666666666" />
+        <entry key="app/src/main/res/layout/item_main.xml" value="0.34375" />
       </map>
     </option>
   </component>

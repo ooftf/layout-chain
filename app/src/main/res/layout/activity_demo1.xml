@@ -1,51 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-tools:context="com.ooftf.demo.layout_chain.demo1.Demo1Activity">
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
-    <data>
-        <variable
-            name="viewModel"
-            type="com.ooftf.demo.layout_chain.demo1.Demo1ViewModel" />
-    </data>
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.motion.widget.MotionLayout
+            android:id="@+id/motionLayout"
+            app:layoutDescription="@xml/scene_09"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="50dp"
+            app:layout_scrollFlags="scroll|enterAlways|snap|exitUntilCollapsed">
+            <TextView
+                android:background="#FFFFFF"
+                android:id="@+id/title"
+                android:gravity="center"
+                android:text="appBarLayout"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="200dp"
+                android:layout_height="50dp"/>
+            <TextView
+                android:background="#FF0000"
+                android:id="@+id/label"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="Monterey"
+                android:textSize="32dp" />
+
+        </androidx.constraintlayout.motion.widget.MotionLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.ooftf.demo.layout_chain.demo1.CoordinatorLayout
+
+        <TextView
+            android:text="是发大水范德萨艾弗森打发手是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时是发大水范德萨艾弗森打发手动阀地方随时动阀地方随时"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:background="#0000ff"
-                android:overScrollMode="never"
-                items="@{viewModel.items2}"
-                itemBinding="@{viewModel.itemBinding2}"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:tag="header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/toolbar"
-                android:text="toolbar"
-                android:gravity="center"
-                android:background="#00ff00"
-                android:tag="toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="#ff0000"
-                android:overScrollMode="never"
-                items="@{viewModel.items}"
-                itemBinding="@{viewModel.itemBinding}"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:tag="body"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+    </androidx.core.widget.NestedScrollView>
 
-        </com.ooftf.demo.layout_chain.demo1.CoordinatorLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

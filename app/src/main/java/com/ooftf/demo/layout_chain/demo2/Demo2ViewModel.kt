@@ -1,19 +1,17 @@
-package com.ooftf.demo.layout_chain.demo1
+package com.ooftf.demo.layout_chain.demo2
 
 import android.app.Application
 import android.os.Handler
 import com.ooftf.arch.frame.mvvm.vm.BaseListViewModel
-import com.ooftf.arch.frame.mvvm.vm.BaseViewModel
 import com.ooftf.basic.armor.ObservableArrayListPro
 import com.ooftf.demo.layout_chain.R
-import me.tatarka.bindingcollectionadapter2.ItemBinding
 
 /**
  * @author 
  * @email 
  * @date 2021-10-11
  */
-class Demo1ViewModel (application: Application) : BaseListViewModel<String>(application) {
+class Demo2ViewModel (application: Application) : BaseListViewModel<String>(application) {
 
 
     val items2 = ObservableArrayListPro<String>()
@@ -33,7 +31,7 @@ class Demo1ViewModel (application: Application) : BaseListViewModel<String>(appl
 
     }
     override fun getItemLayout(): Int {
-        return R.layout.item_demo1
+        return R.layout.item_demo2
     }
 
 }
