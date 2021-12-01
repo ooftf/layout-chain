@@ -15,9 +15,6 @@ import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ParentRecyclerView extends RecyclerView {
-    private boolean isNeedIntercept = false;
-    private float downX;    //按下时 的X坐标
-    private float downY;    //按下时 的Y坐标
 
     public ParentRecyclerView(@NonNull Context context) {
         super(context);
@@ -34,20 +31,21 @@ public class ParentRecyclerView extends RecyclerView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
-        super.onInterceptTouchEvent(e);
-        return false;
+        boolean result =  super.onInterceptTouchEvent(e);
+        if(e.getAction()==MotionEvent.ACTION_DOWN){// 向下fling 的时候，不能向上滑动
+            return false;
+        }
+        return result;
     }
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
+        if(target instanceof ScrollingView){
+            requestDisallowInterceptTouchEvent(true);
+        }
+
         return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
     }
-
-    @Override
-    public boolean startNestedScroll(int axes, int type) {
-        return super.startNestedScroll(axes, type);
-    }
-
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
@@ -62,7 +60,6 @@ public class ParentRecyclerView extends RecyclerView {
                 scrollBy(0, dy);
             }
         }
-
 
     }
 

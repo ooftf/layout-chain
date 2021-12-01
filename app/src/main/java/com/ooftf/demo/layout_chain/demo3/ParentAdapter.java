@@ -57,6 +57,12 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.MyViewHold
             TextView textView = new TextView(parent.getContext());
             textView.setPadding(10,10,10,10);
             textView.setGravity(Gravity.CENTER);
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
             return new MyViewHolder(textView);
         }else{
             PageView pageView = new PageView(parent.getContext());
