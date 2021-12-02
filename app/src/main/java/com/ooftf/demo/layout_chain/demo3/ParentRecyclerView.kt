@@ -1,90 +1,84 @@
-package com.ooftf.demo.layout_chain.demo3;
+package com.ooftf.demo.layout_chain.demo3
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.OverScroller;
+import android.content.Context
+import android.util.AttributeSet
+import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+import androidx.core.view.ScrollingView
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.RecyclerView
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.NestedScrollingParent;
-import androidx.core.view.ScrollingView;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
-public class ParentRecyclerView extends RecyclerView {
-
-    public ParentRecyclerView(@NonNull Context context) {
-        super(context);
+class ParentRecyclerView : RecyclerView {
+    constructor(context: Context) : super(context) {}
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {}
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
     }
 
-    public ParentRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+    override fun onInterceptTouchEvent(e: MotionEvent): Boolean {
+        val result = super.onInterceptTouchEvent(e)
+        return if (e.action == MotionEvent.ACTION_DOWN) { // 向下fling 的时候，不能向上滑动
+            false
+        } else result
     }
 
-    public ParentRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent e) {
-        boolean result =  super.onInterceptTouchEvent(e);
-        if(e.getAction()==MotionEvent.ACTION_DOWN){// 向下fling 的时候，不能向上滑动
-            return false;
+    override fun onStartNestedScroll(child: View, target: View, nestedScrollAxes: Int): Boolean {
+        if (target is ScrollingView) {
+            requestDisallowInterceptTouchEvent(true)
         }
-        return result;
+        return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
     }
 
-    @Override
-    public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        if(target instanceof ScrollingView){
-            requestDisallowInterceptTouchEvent(true);
-        }
-
-        return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
+    override fun onNestedScroll(
+        target: View,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int
+    ) {
+        scrollBy(0, dyUnconsumed)
     }
 
-    @Override
-    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        scrollBy(0, dyUnconsumed);
-    }
-
-    @Override
-    public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
-        if (dy > 0) {//向上滑动
-            if (canScrollVertically(1)) {// 没有到底部
-                consumed[1] = dy;
-                scrollBy(0, dy);
+    override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray) {
+        if (dy > 0) { //向上滑动
+            if (canScrollVertically(1)) { // 没有到底部
+                consumed[1] = dy
+                scrollBy(0, dy)
             }
         }
-
     }
 
-    @Override
-    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        if (velocityY > 0) {// 向上 fling
-            if (canScrollVertically(1)) {// 没有到底部
-                Log.e("onNestedPreFling", "::" + computeVerticalScrollOffset() + "::" + computeVerticalScrollRange());
-                fling((int) velocityX, (int) velocityY);
-                return true;
+    override fun onNestedPreFling(target: View, velocityX: Float, velocityY: Float): Boolean {
+        if (velocityY > 0) { // 向上 fling
+            if (canScrollVertically(1)) { // 没有到底部
+                Log.e(
+                    "onNestedPreFling",
+                    "::" + computeVerticalScrollOffset() + "::" + computeVerticalScrollRange()
+                )
+                fling(velocityX.toInt(), velocityY.toInt())
+                return true
             }
         }
-        return false;
+        return false
     }
 
-    @Override
-    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
+    override fun onNestedFling(
+        target: View,
+        velocityX: Float,
+        velocityY: Float,
+        consumed: Boolean
+    ): Boolean {
         if (velocityY < 0) { // 向下 fling
-            if (!(target.canScrollVertically(-1))) {// 到顶
-                fling((int) velocityX, (int) velocityY);
+            if (!target.canScrollVertically(-1)) { // 到顶
+                fling(velocityX.toInt(), velocityY.toInt())
             }
         } else {
-            fling((int) velocityX, (int) velocityY);
+            fling(velocityX.toInt(), velocityY.toInt())
         }
-        return true;
+        return true
     }
-
 }

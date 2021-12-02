@@ -16,6 +16,7 @@ class Demo3Activity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
         recyclerView.adapter = ParentAdapter()
+
     }
 
 

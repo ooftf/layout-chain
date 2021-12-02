@@ -1,105 +1,132 @@
-package com.ooftf.demo.layout_chain.demo3;
+package com.ooftf.demo.layout_chain.demo3
 
-import android.graphics.Color;
-import android.util.SparseIntArray;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.graphics.Color
+import android.graphics.Rect
+import android.util.Log
+import android.util.SparseBooleanArray
+import android.util.SparseIntArray
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.blankj.utilcode.util.ScreenUtils
+import com.ooftf.basic.utils.getVisibleRectOfScreen
+import java.util.*
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
-import java.util.Random;
-
-public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.MyViewHolder> {
-    Random random = new Random();
-    SparseIntArray sia = new SparseIntArray();
-    SparseIntArray h = new SparseIntArray();
-    {
-        for (int i = 0; i < 20; i++) {
-                sia.put(i,random.nextInt(2));
-                h.put(i,(random.nextInt(2)+1)*100);
-        }
-    }
-
-    public ParentAdapter() {
-        super();
-    }
+class ParentAdapter : RecyclerView.Adapter<ParentAdapter.MyViewHolder>() {
+    var random = Random()
+    var sia = SparseIntArray()
+    var h = SparseIntArray()
 
     /**
      * 返回 item 个数
      * @return
      */
-    @Override
-    public int getItemCount() {
-        return sia.size()+1;
+    override fun getItemCount(): Int {
+        return sia.size() + 1
     }
 
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        if (holder.itemViewType == 0) {
+            (holder.itemView as TextView).height = h[position]
+            holder.itemView.setBackgroundColor(
+                Color.argb(
+                    255,
+                    random.nextInt(255),
+                    random.nextInt(255),
+                    random.nextInt(255)
+                )
+            )
+            holder.itemView.text = "i::$position"
+        } else {
+        }
+    }
 
-    @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        if(holder.getItemViewType() == 0){
-            ((TextView)(holder.itemView)).setHeight(h.get(position));
-            holder.itemView.setBackgroundColor(Color.argb(255,random.nextInt(255),random.nextInt(255),random.nextInt(255)));
-            ((TextView)(holder.itemView)).setText("i::"+position);
-        }else{
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        return if (viewType == 0) {
+            val textView = TextView(parent.context)
+            textView.setPadding(10, 10, 10, 10)
+            textView.gravity = Gravity.CENTER
+            textView.setOnClickListener { }
+            MyViewHolder(textView)
+        } else {
+            val pageView = PageView(parent.context)
+            pageView.layoutParams = StaggeredGridLayoutManager.LayoutParams(
+                StaggeredGridLayoutManager.LayoutParams.MATCH_PARENT,
+                StaggeredGridLayoutManager.LayoutParams.MATCH_PARENT
+            )
+            MyViewHolder(pageView)
+        }
+    }
 
+    override fun getItemViewType(position: Int): Int {
+        return if (position < h.size()) {
+            0
+        } else {
+            1
+        }
+    }
+
+    override fun onViewAttachedToWindow(holder: MyViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        val lp = holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
+        lp.isFullSpan = isFullSpan(holder.bindingAdapterPosition)
+        holder.itemView.viewTreeObserver.addOnScrollChangedListener (holder.OnScrollChangedListener)
+        obserable.put(holder.bindingAdapterPosition, false)
+    }
+    var obserable = SparseBooleanArray()
+
+    fun isFullSpan(position: Int): Boolean {
+        return if (position == h.size()) {
+            true
+        } else sia[position] == 0
+    }
+
+    fun notifyShowChange(holder:RecyclerView.ViewHolder,show:Boolean){
+        Log.e("ParentChange","$holder ::"+show)
+    }
+
+    override fun onViewDetachedFromWindow(holder: MyViewHolder) {
+
+        val oldShow = obserable.get(holder.bindingAdapterPosition)
+        obserable.delete(holder.bindingAdapterPosition)
+        holder.itemView.viewTreeObserver.removeOnScrollChangedListener(holder.OnScrollChangedListener)
+        if(oldShow){
+            notifyShowChange(holder,false)
         }
 
     }
-
-    @NonNull
-    @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if(viewType == 0){
-            TextView textView = new TextView(parent.getContext());
-            textView.setPadding(10,10,10,10);
-            textView.setGravity(Gravity.CENTER);
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
+    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+        val OnScrollChangedListener = MyOnScrollChangedListener()
+        inner class MyOnScrollChangedListener : ViewTreeObserver.OnScrollChangedListener {
+            override fun onScrollChanged() {
+                val nowShow = isShow(this@MyViewHolder)
+                val oldShow = obserable.get(bindingAdapterPosition)
+                if(nowShow!=oldShow){
+                    notifyShowChange(this@MyViewHolder,nowShow)
+                    obserable.put(bindingAdapterPosition, nowShow)
                 }
-            });
-            return new MyViewHolder(textView);
-        }else{
-            PageView pageView = new PageView(parent.getContext());
-            pageView.setLayoutParams(new StaggeredGridLayoutManager.LayoutParams(StaggeredGridLayoutManager.LayoutParams.MATCH_PARENT,StaggeredGridLayoutManager.LayoutParams.MATCH_PARENT));
-            return new MyViewHolder(pageView);
-        }
+            }
 
-    }
-
-
-    public int getItemViewType(int position) {
-        if( position < h.size()){
-            return 0;
-        }else {
-            return 1;
         }
     }
 
-    @Override
-    public void onViewAttachedToWindow(@NonNull MyViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-        StaggeredGridLayoutManager.LayoutParams lp = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
-        lp.setFullSpan(isFullSpan(holder.getAdapterPosition()));
+    fun isShow(view: MyViewHolder): Boolean {
+        val r = view.itemView.getVisibleRectOfScreen()
+        return r.intersect(screen)
     }
 
-
-    public boolean isFullSpan(int position) {
-        if(position == h.size()){
-            return true;
-        }
-        return sia.get(position) == 0;
+    val screen : Rect = Rect().apply {
+        set(0,0, ScreenUtils.getAppScreenWidth(), ScreenUtils.getAppScreenHeight())
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
-
-        public MyViewHolder(@NonNull View itemView) {
-            super(itemView);
+    init {
+        for (i in 0..19) {
+            sia.put(i, random.nextInt(2))
+            h.put(i, (random.nextInt(2) + 1) * 100)
         }
     }
 }

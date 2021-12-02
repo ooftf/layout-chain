@@ -1,77 +1,117 @@
-package com.ooftf.demo.layout_chain.demo3;
+package com.ooftf.demo.layout_chain.demo3
 
-import android.graphics.Color;
-import android.util.SparseIntArray;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.graphics.Color
+import android.graphics.Rect
+import android.util.Log
+import androidx.recyclerview.widget.RecyclerView
+import android.util.SparseIntArray
+import android.util.SparseBooleanArray
+import android.widget.TextView
+import android.view.ViewGroup
+import android.view.Gravity
+import android.view.View
+import android.view.ViewTreeObserver.OnScrollChangedListener
+import com.blankj.utilcode.util.ScreenUtils
+import com.ooftf.basic.utils.getVisibleRectOfScreen
+import java.util.*
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.Random;
-
-public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.MyViewHolder> {
-    Random random = new Random();
-    SparseIntArray sia = new SparseIntArray();
-    SparseIntArray h = new SparseIntArray();
-    {
-        for (int i = 0; i < 200; i++) {
-                sia.put(i,random.nextInt(2));
-                h.put(i,(random.nextInt(2)+1)*100);
-        }
-    }
-
-    public ChildAdapter() {
-        super();
-    }
+class ChildAdapter : RecyclerView.Adapter<ChildAdapter.MyViewHolder>() {
+    var random = Random()
+    var sia = SparseIntArray()
+    var h = SparseIntArray()
+    var obserable = SparseBooleanArray()
 
     /**
      * 返回 item 个数
      * @return
      */
-    @Override
-    public int getItemCount() {
-        return sia.size();
+    override fun getItemCount(): Int {
+        return sia.size()
     }
 
-
-    @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        if(holder.getItemViewType() == 0){
-            ((TextView)(holder.itemView)).setHeight(h.get(position));
-            holder.itemView.setBackgroundColor(Color.argb(255,random.nextInt(255),random.nextInt(255),random.nextInt(255)));
-            ((TextView)(holder.itemView)).setText("i::"+position);
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        //Log.e("onBindViewHolder", "position::$position")
+        if (holder.itemViewType == 0) {
+            (holder.itemView as TextView).height = h[position]
+            holder.itemView.setBackgroundColor(
+                Color.argb(
+                    255,
+                    random.nextInt(255),
+                    random.nextInt(255),
+                    random.nextInt(255)
+                )
+            )
+            holder.itemView.text = "i::$position"
         }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        val textView = TextView(parent.context)
+        textView.setPadding(10, 10, 10, 10)
+        textView.gravity = Gravity.CENTER
+        textView.setOnClickListener { }
+        return MyViewHolder(textView)
+    }
+
+    override fun onViewAttachedToWindow(holder: MyViewHolder) {
+
+            //Log.e("onViewAttachedToWindow", "$holder  ::  ${holder.itemView.viewTreeObserver} :: ${holder.OnScrollChangedListener.hashCode()}" )
+        holder.itemView.viewTreeObserver.addOnScrollChangedListener (holder.OnScrollChangedListener)
+        obserable.put(holder.bindingAdapterPosition, false)
+
+    }
+    fun notifyShowChange(holder:RecyclerView.ViewHolder,show:Boolean){
+            // 正确监听，view 显示在视野中，没有计算遮盖层
+            Log.e("ChildShowChange","$holder ::"+show)
+
 
     }
 
-    @NonNull
-    @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            TextView textView = new TextView(parent.getContext());
-            textView.setPadding(10,10,10,10);
-            textView.setGravity(Gravity.CENTER);
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+    override fun onViewDetachedFromWindow(holder: MyViewHolder) {
+            //Log.e("onViewDetachedFromWindow", "$holder  ::  ${holder.itemView.viewTreeObserver} :: ${holder.OnScrollChangedListener.hashCode()}" )
+            val oldShow = obserable.get(holder.bindingAdapterPosition)
+            obserable.delete(holder.bindingAdapterPosition)
+            holder.itemView.viewTreeObserver.removeOnScrollChangedListener(holder.OnScrollChangedListener)
+            if(oldShow){
+                notifyShowChange(holder,false)
+            }
 
+
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return 0
+    }
+
+    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+        val OnScrollChangedListener = MyOnScrollChangedListener()
+        inner class MyOnScrollChangedListener :OnScrollChangedListener{
+            override fun onScrollChanged() {
+                val nowShow = isShow(this@MyViewHolder)
+                val oldShow = obserable.get(bindingAdapterPosition)
+                if(nowShow!=oldShow){
+                    notifyShowChange(this@MyViewHolder,nowShow)
+                    obserable.put(bindingAdapterPosition, nowShow)
                 }
-            });
-            return new MyViewHolder(textView);
+            }
 
+        }
     }
 
 
-    public int getItemViewType(int position) {
-        return 0;
+
+    fun isShow(holder: MyViewHolder): Boolean {
+        val frame = Rect()
+        holder.itemView.getWindowVisibleDisplayFrame(frame)
+        return  holder.itemView.getVisibleRectOfScreen().intersect(frame)
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        public MyViewHolder(@NonNull View itemView) {
-            super(itemView);
+
+    init {
+        for (i in 0..199) {
+            sia.put(i, random.nextInt(2))
+            h.put(i, (random.nextInt(2) + 1) * 100)
         }
     }
 }

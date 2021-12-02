@@ -1,239 +1,274 @@
-package com.ooftf.demo.layout_chain.demo2;
+package com.ooftf.demo.layout_chain.demo2
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.OverScroller;
+import android.content.Context
+import android.util.AttributeSet
+import com.ooftf.basic.utils.DensityUtil.dip2pxInt
+import android.view.ViewGroup
+import androidx.core.view.NestedScrollingParent
+import com.ooftf.basic.utils.DensityUtil
+import com.ooftf.demo.layout_chain.demo2.CoordinatorLayout.ProgressChangeListener
+import android.view.ViewGroup.MarginLayoutParams
+import androidx.core.view.ViewCompat
+import android.widget.OverScroller
+import androidx.core.view.ScrollingView
+import android.widget.FrameLayout
+import androidx.recyclerview.widget.RecyclerView
+import android.util.SparseIntArray
+import android.widget.TextView
+import android.view.Gravity
+import com.ooftf.demo.layout_chain.demo3.PageView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import android.view.MotionEvent
+import android.view.View
+import com.ooftf.demo.layout_chain.demo4.StickyRecyclerViewLayout
+import com.ooftf.demo.layout_chain.demo4.StickyAdapter
+import java.util.ArrayList
 
-import androidx.annotation.NonNull;
-import androidx.core.view.NestedScrollingParent;
-import androidx.core.view.ScrollingView;
-import androidx.core.view.ViewCompat;
+class CoordinatorLayout : ViewGroup, NestedScrollingParent {
+    var header: View? = null
+    var body: View? = null
+    var toolbar: View? = null
+    var overLapMax = dip2pxInt(54f)
+    var progressChangeListeners: MutableList<ProgressChangeListener> = ArrayList()
 
-import com.ooftf.basic.utils.DensityUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class CoordinatorLayout extends ViewGroup implements NestedScrollingParent {
-    View header = null;
-    View body = null;
-    View toolbar = null;
-    int overLapMax = DensityUtil.INSTANCE.dip2pxInt(54);
-    List<ProgressChangeListener> progressChangeListeners = new ArrayList<>();
-    public CoordinatorLayout(Context context) {
-        super(context);
+    constructor(context: Context?) : super(context) {}
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {}
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
     }
 
-    public CoordinatorLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    constructor(
+        context: Context?,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes) {
     }
 
-    public CoordinatorLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+    fun addProgressChangedListener(listener: ProgressChangeListener) {
+        progressChangeListeners.add(listener)
     }
 
-    public CoordinatorLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+    fun removeProgressChangedListener(listener: ProgressChangeListener) {
+        progressChangeListeners.remove(listener)
     }
 
-    {
-        addProgressChangedListener(new ProgressChangeListener() {
-            @Override
-            public void onProgressChange(float progress) {
-                layoutBody();
-                layoutToolbar();
-            }
-        });
-    }
-
-    public void addProgressChangedListener(ProgressChangeListener listener){
-        progressChangeListeners.add(listener);
-    }
-    public void removeProgressChangedListener(ProgressChangeListener listener){
-        progressChangeListeners.remove(listener);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (header == null) {
-            header = findViewWithTag("header");
+            header = findViewWithTag("header")
         }
         if (body == null) {
-            body = findViewWithTag("body");
+            body = findViewWithTag("body")
         }
         if (toolbar == null) {
-            toolbar = findViewWithTag("toolbar");
+            toolbar = findViewWithTag("toolbar")
         }
-        measureChildWithMargins(header, widthMeasureSpec, 0, heightMeasureSpec, 0);
-        measureChildWithMargins(toolbar, widthMeasureSpec, 0, heightMeasureSpec, 0);
-        measureChildWithMargins(body, widthMeasureSpec, 0, heightMeasureSpec, toolbar.getMeasuredHeight());
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        measureChildWithMargins(header, widthMeasureSpec, 0, heightMeasureSpec, 0)
+        measureChildWithMargins(toolbar, widthMeasureSpec, 0, heightMeasureSpec, 0)
+        measureChildWithMargins(
+            body,
+            widthMeasureSpec,
+            0,
+            heightMeasureSpec,
+            toolbar!!.measuredHeight
+        )
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
-    int getCanScrollDistance() {
-        return header.getMeasuredHeight() - toolbar.getMeasuredHeight();
+    val canScrollDistance: Int
+        get() = header!!.measuredHeight - toolbar!!.measuredHeight
+
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        layoutHeader()
+        layoutBody()
+        layoutToolbar()
     }
 
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        layoutHeader();
-        layoutBody();
-        layoutToolbar();
+    private fun layoutHeader() {
+        val lp = header!!.layoutParams as MarginLayoutParams
+        header!!.layout(
+            lp.leftMargin,
+            lp.topMargin,
+            lp.leftMargin + header!!.measuredWidth,
+            lp.topMargin + header!!.measuredHeight
+        )
     }
 
-    private void layoutHeader() {
-        MarginLayoutParams lp = ((MarginLayoutParams) header.getLayoutParams());
-        header.layout(lp.leftMargin, lp.topMargin, lp.leftMargin + header.getMeasuredWidth(), lp.topMargin+header.getMeasuredHeight());
+    private val progress: Float
+        private get() = scrollY / canScrollDistance.toFloat()
+
+    private fun layoutBody() {
+        val lp = body!!.layoutParams as MarginLayoutParams
+        val overlap = (overLapMax * (1 - progress)).toInt()
+        val bodyTop = header!!.measuredHeight - overlap + lp.topMargin
+        body!!.layout(
+            lp.leftMargin,
+            bodyTop,
+            lp.leftMargin + body!!.measuredWidth,
+            body!!.measuredHeight + bodyTop
+        )
     }
 
-    private float getProgress() {
-        return getScrollY() / (float) getCanScrollDistance();
-    }
-    private void layoutBody(){
-        MarginLayoutParams lp = ((MarginLayoutParams) body.getLayoutParams());
-        int overlap = (int) (overLapMax * (1 - getProgress()));
-        int bodyTop = header.getMeasuredHeight() - overlap+ lp.topMargin;
-        body.layout(lp.leftMargin, bodyTop, lp.leftMargin + body.getMeasuredWidth(), body.getMeasuredHeight() + bodyTop);
-    }
-    private void layoutToolbar() {
-        toolbar.setAlpha(getProgress());
-        MarginLayoutParams lp = ((MarginLayoutParams) toolbar.getLayoutParams());
-        toolbar.layout(lp.leftMargin, lp.topMargin+getScrollY(), lp.leftMargin + toolbar.getMeasuredWidth(), lp.topMargin+getScrollY() +toolbar.getMeasuredHeight());
+    private fun layoutToolbar() {
+        toolbar!!.alpha = progress
+        val lp = toolbar!!.layoutParams as MarginLayoutParams
+        toolbar!!.layout(
+            lp.leftMargin,
+            lp.topMargin + scrollY,
+            lp.leftMargin + toolbar!!.measuredWidth,
+            lp.topMargin + scrollY + toolbar!!.measuredHeight
+        )
     }
 
-    @Override
-    public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
+    override fun onStartNestedScroll(child: View, target: View, nestedScrollAxes: Int): Boolean {
+        return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
     }
 
-    @Override
-    public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed) {
+    override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray) {
         if (dy > 0) {
             //没有滚动到顶部
-            int newCurrentScroll = getScrollY() + dy;
+            var newCurrentScroll = scrollY + dy
             if (newCurrentScroll < 0) {
-                newCurrentScroll = 0;
-                consumed[1] = newCurrentScroll - getScrollY();
-            } else if (newCurrentScroll > getCanScrollDistance()) {
-                newCurrentScroll = getCanScrollDistance();
-                consumed[1] = newCurrentScroll - getScrollY();
+                newCurrentScroll = 0
+                consumed[1] = newCurrentScroll - scrollY
+            } else if (newCurrentScroll > canScrollDistance) {
+                newCurrentScroll = canScrollDistance
+                consumed[1] = newCurrentScroll - scrollY
             } else {
-                consumed[1] = dy;
+                consumed[1] = dy
             }
-            scrollBy(0, consumed[1]);
+            scrollBy(0, consumed[1])
         }
     }
 
-    @Override
-    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+    override fun onNestedScroll(
+        target: View,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int
+    ) {
         if (dyUnconsumed < 0) {
             //没有滚动到顶部
-            int consumedDy = 0;
-            int newCurrentScroll = getScrollY() + dyUnconsumed;
+            var consumedDy = 0
+            var newCurrentScroll = scrollY + dyUnconsumed
             if (newCurrentScroll < 0) {
-                newCurrentScroll = 0;
-                consumedDy = newCurrentScroll - getScrollY();
-            } else if (newCurrentScroll > getCanScrollDistance()) {
-                newCurrentScroll = getCanScrollDistance();
-                consumedDy = newCurrentScroll - getScrollY();
+                newCurrentScroll = 0
+                consumedDy = newCurrentScroll - scrollY
+            } else if (newCurrentScroll > canScrollDistance) {
+                newCurrentScroll = canScrollDistance
+                consumedDy = newCurrentScroll - scrollY
             } else {
-                consumedDy = dyUnconsumed;
+                consumedDy = dyUnconsumed
             }
-            scrollBy(0, consumedDy);
+            scrollBy(0, consumedDy)
         }
     }
 
-    OverScroller scroller = new OverScroller(getContext());
-    @Override
-    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-
-        if (velocityY > 0) {
-            if(getScrollY()>=getCanScrollDistance()){
+    var scroller = OverScroller(context)
+    override fun onNestedPreFling(target: View, velocityX: Float, velocityY: Float): Boolean {
+        return if (velocityY > 0) {
+            if (scrollY >= canScrollDistance) {
                 //已经到顶，不消费
-                return false;
-            }else{
-                scroller.fling(0,
-                        getScrollY(),
-                        0,
-                        (int)velocityY,
-                        0,
-                        0,
-                        0,
-                        getCanScrollDistance());
-                postInvalidate();
-                return true;
+                false
+            } else {
+                scroller.fling(
+                    0,
+                    scrollY,
+                    0,
+                    velocityY.toInt(),
+                    0,
+                    0,
+                    0,
+                    canScrollDistance
+                )
+                postInvalidate()
+                true
             }
-        }
-        return false;
+        } else false
     }
-    @Override
-    public void computeScroll() {
+
+    override fun computeScroll() {
         //动画未完成
         if (scroller.computeScrollOffset()) {
-            scrollTo(0, scroller.getCurrY());
+            scrollTo(0, scroller.currY)
             //触发draw()，必须有这一步
-            postInvalidate();
+            postInvalidate()
         }
-        notifyProgressChange();
+        notifyProgressChange()
     }
 
-
-    @Override
-    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        int targetOffset = getViewOffset(target);
-        if (velocityY < 0&&targetOffset==0) {
-            if(getScrollY()>0){
-                scroller.fling(0,
-                        getScrollY(),
-                        0,
-                        (int)velocityY,
-                        0,
-                        0,
-                        0,
-                        getCanScrollDistance());
-                postInvalidate();
-                return true;
-            }else{
+    override fun onNestedFling(
+        target: View,
+        velocityX: Float,
+        velocityY: Float,
+        consumed: Boolean
+    ): Boolean {
+        val targetOffset = getViewOffset(target)
+        return if (velocityY < 0 && targetOffset == 0) {
+            if (scrollY > 0) {
+                scroller.fling(
+                    0,
+                    scrollY,
+                    0,
+                    velocityY.toInt(),
+                    0,
+                    0,
+                    0,
+                    canScrollDistance
+                )
+                postInvalidate()
+                true
+            } else {
                 //已经到顶，不消费
-                return false;
+                false
             }
-        }
-        return false;
+        } else false
     }
 
-    int getViewOffset(View target){
-        if(target instanceof ScrollingView){
-            return  ((ScrollingView) target).computeVerticalScrollOffset();
-        }else{
-            return target.getScrollY();
-        }
-    }
-
-    void notifyProgressChange(){
-        float progress = getProgress();
-        for(ProgressChangeListener listener : progressChangeListeners){
-            listener.onProgressChange(progress);
+    fun getViewOffset(target: View): Int {
+        return if (target is ScrollingView) {
+            (target as ScrollingView).computeVerticalScrollOffset()
+        } else {
+            target.scrollY
         }
     }
-    @Override
-    protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
-        return new MarginLayoutParams(lp);
+
+    fun notifyProgressChange() {
+        val progress = progress
+        for (listener in progressChangeListeners) {
+            listener.onProgressChange(progress)
+        }
     }
 
-    @Override
-    protected MarginLayoutParams generateDefaultLayoutParams() {
-        return new MarginLayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+    override fun generateLayoutParams(lp: LayoutParams): LayoutParams {
+        return MarginLayoutParams(lp)
     }
 
-    @Override
-    public LayoutParams generateLayoutParams(AttributeSet attrs) {
-        return new MarginLayoutParams(getContext(), attrs);
+    override fun generateDefaultLayoutParams(): MarginLayoutParams {
+        return MarginLayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        )
     }
 
-    static interface ProgressChangeListener{
-       void onProgressChange(float progress);
+    override fun generateLayoutParams(attrs: AttributeSet): LayoutParams {
+        return MarginLayoutParams(context, attrs)
+    }
+
+    interface ProgressChangeListener {
+        fun onProgressChange(progress: Float)
+    }
+
+    init {
+        addProgressChangedListener(object : ProgressChangeListener {
+            override fun onProgressChange(progress: Float) {
+                layoutBody()
+                layoutToolbar()
+            }
+        })
     }
 }
