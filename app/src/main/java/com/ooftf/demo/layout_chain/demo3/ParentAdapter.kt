@@ -86,7 +86,7 @@ class ParentAdapter : RecyclerView.Adapter<ParentAdapter.MyViewHolder>() {
     }
 
     fun notifyShowChange(holder:RecyclerView.ViewHolder,show:Boolean){
-        Log.e("ParentChange","$holder ::"+show)
+        //Log.e("ParentChange","$holder ::"+show)
     }
 
     override fun onViewDetachedFromWindow(holder: MyViewHolder) {

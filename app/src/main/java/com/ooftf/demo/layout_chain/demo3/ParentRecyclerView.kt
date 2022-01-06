@@ -5,8 +5,10 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.OverScroller
 import androidx.core.view.ScrollingView
 import androidx.core.view.ViewCompat
+import androidx.core.widget.ScrollerCompat
 import androidx.recyclerview.widget.RecyclerView
 
 class ParentRecyclerView : RecyclerView {
@@ -16,8 +18,8 @@ class ParentRecyclerView : RecyclerView {
         context,
         attrs,
         defStyleAttr
-    ) {
-    }
+    )
+    val flingHelper = FlingHelper(this)
 
     override fun onInterceptTouchEvent(e: MotionEvent): Boolean {
         val result = super.onInterceptTouchEvent(e)
@@ -40,10 +42,18 @@ class ParentRecyclerView : RecyclerView {
         dxUnconsumed: Int,
         dyUnconsumed: Int
     ) {
+        Log.e(
+            "fling",
+            "onNestedScroll"
+        )
         scrollBy(0, dyUnconsumed)
     }
 
     override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray) {
+        Log.e(
+            "fling",
+            "onNestedPreScroll"
+        )
         if (dy > 0) { //向上滑动
             if (canScrollVertically(1)) { // 没有到底部
                 consumed[1] = dy
@@ -52,13 +62,18 @@ class ParentRecyclerView : RecyclerView {
         }
     }
 
+//    override fun fling(velocityX: Int, velocityY: Int): Boolean {
+//
+//        return super.fling(velocityX, velocityY)
+//        return true
+//    }
     override fun onNestedPreFling(target: View, velocityX: Float, velocityY: Float): Boolean {
+        Log.e(
+            "fling",
+            "onNestedPreFling velocityY:"+velocityY
+        )
         if (velocityY > 0) { // 向上 fling
             if (canScrollVertically(1)) { // 没有到底部
-                Log.e(
-                    "onNestedPreFling",
-                    "::" + computeVerticalScrollOffset() + "::" + computeVerticalScrollRange()
-                )
                 fling(velocityX.toInt(), velocityY.toInt())
                 return true
             }
@@ -66,15 +81,31 @@ class ParentRecyclerView : RecyclerView {
         return false
     }
 
+
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        flingHelper.dispatchTouchEvent(ev)
+        return super.dispatchTouchEvent(ev)
+    }
+    override fun computeScroll() {
+        super.computeScroll()
+        flingHelper.computeScroll()
+    }
+
+
     override fun onNestedFling(
         target: View,
         velocityX: Float,
         velocityY: Float,
         consumed: Boolean
     ): Boolean {
+        Log.e(
+            "fling",
+            "onNestedFling velocityY:"+velocityY
+        )
         if (velocityY < 0) { // 向下 fling
-            if (!target.canScrollVertically(-1)) { // 到顶
-                fling(velocityX.toInt(), velocityY.toInt())
+            if (!target.canScrollVertically(-1)) { // 到顶z
+               fling(velocityX.toInt(), velocityY.toInt())
             }
         } else {
             fling(velocityX.toInt(), velocityY.toInt())

@@ -54,6 +54,7 @@ class PageView:LinearLayout {
 
             override fun instantiateItem(container: ViewGroup, position: Int): Any {
                 val recyclerView = ParentRecyclerView(container.context)
+                recyclerView.setTag("child")
                 recyclerView.layoutManager = MyLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                 recyclerView.adapter = ChildAdapter()
                 container.addView(recyclerView,ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT)

@@ -62,7 +62,7 @@ class ChildAdapter : RecyclerView.Adapter<ChildAdapter.MyViewHolder>() {
     }
     fun notifyShowChange(holder:RecyclerView.ViewHolder,show:Boolean){
             // 正确监听，view 显示在视野中，没有计算遮盖层
-            Log.e("ChildShowChange","$holder ::"+show)
+            //Log.e("ChildShowChange","$holder ::"+show)
 
 
     }
